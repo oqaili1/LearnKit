@@ -13,7 +13,7 @@ export default async function NodePage({ params }: { params: Promise<{ id: strin
   const { id, nodeId } = await params;
   const node = await db.node.findUnique({
     where: { id: nodeId },
-    include: { path: true, summaries: { orderBy: { createdAt: "desc" } } },
+    include: { path: true, summaries: { orderBy: [{ createdAt: "desc" }, { id: "desc" }] } },
   });
   if (!node || node.pathId !== id) notFound();
 

@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# LearnKit — Learning Summary Manager
 
-## Getting Started
+A local-first web app to organize everything you learn — your own way.
 
-First, run the development server:
+Create a **learning path** (e.g. "Python for Data Science") and choose its structure:
+Course → Module → Lesson, Book → Chapter → Section, free-form, or your own custom levels.
+Every child level is generated automatically from the path's hierarchy.
+
+For any item you can:
+
+- Write your own markdown notes and track progress (not started / in progress / completed)
+- Attach a source URL
+- Generate an **AI summary** with Google Gemini (free tier):
+  - paste text from a book/article/lesson
+  - paste a video transcript
+  - paste a YouTube URL (captions are fetched automatically)
+- Keep a history of generated summaries, copy one into your notes, or delete it
+
+## Tech
+
+- Next.js 16 (App Router, TypeScript), Tailwind CSS 4
+- SQLite via Prisma 7 (driver adapter `better-sqlite3`)
+- Google Gemini via `@google/genai`
+- `youtube-transcript` for YouTube captions
+
+## Getting started
 
 ```bash
+npm install        # runs prisma generate automatically (postinstall)
+
+# free API key at https://aistudio.google.com/apikey
+# either add it to .env.local, or after starting the app use Settings → save key
+echo 'GEMINI_API_KEY="YOUR_KEY"' > .env.local
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. The first time, set your Gemini key in **Settings** (the app
+writes it to `.env.local`; restart the server afterwards).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+> **Note:** the SQLite database (`dev.db`) is local and gitignored — each clone starts
+> empty. `npm run dev` runs `prisma migrate deploy` automatically (`predev`), so the
+> database is created with the correct schema on first run.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Scripts
 
-## Learn More
+- `npm run dev` — dev server
+- `npm run build && npm start` — production
+- `npm run lint` — ESLint
 
-To learn more about Next.js, take a look at the following resources:
+## Notes
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `.env*` is gitignored so your API key is never committed.
+- YouTube caption fetching can occasionally break if YouTube changes its internals;
+  pasting a transcript manually is the reliable fallback.

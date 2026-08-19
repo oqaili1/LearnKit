@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Path {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  hierarchy   String // JSON array of level labels, e.g. ["Course","Module","Lesson"]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  nodes       Node[]
+}
+
+model Node {
+  id        String    @id @default(cuid())
+  pathId    String
+  path      Path      @relation(fields: [pathId], references: [id], onDelete: Cascade)
+  parentId  String?
+  parent    Node?     @relation("NodeTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Node[]    @relation("NodeTree")
+  title     String
+  depth     Int       @default(0)
+  order     Int       @default(0)
+  content   String? // user's own markdown notes
+  sourceUrl String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  summaries Summary[]
+
+  @@index([pathId])
+  @@index([parentId])
+}
+
+model Summary {
+  id        String   @id @default(cuid())
+  nodeId    String
+  node      Node     @relation(fields: [nodeId], references: [id], onDelete: Cascade)
+  inputType String // text | transcript | youtube
+  inputText String? // original pasted content
+  sourceUrl String?
+  result    String // markdown summary
+  model     String
+  createdAt DateTime @default(now())
+
+  @@index([nodeId])
+}

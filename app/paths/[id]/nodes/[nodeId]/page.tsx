@@ -5,6 +5,7 @@ import { db } from "@/app/lib/db";
 import { parseHierarchy, labelForDepth } from "@/app/lib/hierarchy";
 import NotesEditor from "@/app/components/NotesEditor";
 import SummaryPanel from "@/app/components/SummaryPanel";
+import SummaryReview from "@/app/components/SummaryReview";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +51,23 @@ export default async function NodePage({ params }: { params: Promise<{ id: strin
         )}
       </div>
 
+      {summaries.length > 0 ? (
+        <SummaryReview summaries={summaries} />
+      ) : (
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-xl border border-dashed border-zinc-300 bg-white/50 px-5 py-4 dark:border-zinc-700 dark:bg-zinc-900/50">
+          <div>
+            <p className="text-sm font-medium text-zinc-700 dark:text-zinc-200">No summary yet</p>
+            <p className="text-xs text-zinc-400">Generate an AI summary for this item to review it here.</p>
+          </div>
+          <a
+            href="#ai-summaries"
+            className="shrink-0 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-indigo-500"
+          >
+            Generate
+          </a>
+        </div>
+      )}
+
       <div className="grid gap-6 lg:grid-cols-2">
         <section className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
           <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-100">
@@ -63,7 +81,7 @@ export default async function NodePage({ params }: { params: Promise<{ id: strin
           />
         </section>
 
-        <section className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+        <section id="ai-summaries" className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
           <h2 className="mb-3 flex items-center gap-2 text-sm font-semibold text-zinc-800 dark:text-zinc-100">
             <Sparkles size={16} className="text-indigo-600 dark:text-indigo-400" /> AI summaries
           </h2>
